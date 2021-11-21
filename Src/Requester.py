@@ -83,32 +83,40 @@ def fullURL(x: int, y: int, z: int, tile_name):
         URL = URL.replace("{apikey}", "")
     return URL
 
+
 class singleTileTask(threading.Thread):
     # DEFAULT
-    x=-1
-    y=-1
-    z=-1
-    tile_name="OSMChina"
+    x = -1
+    y = -1
+    z = -1
+    tile_name = "OSMChina"
+    threadID = 0
 
     # INIT
-    def __init__(self, x: int, y: int, z: int, tile_name: str):
+    def __init__(self, x: int, y: int, z: int, tile_name: str, threadID: int):
         super().__init__()
         self.x = x
         self.y = y
         self.z = z
         self.tile_name = tile_name
+        self.threadID = threadID
 
     def run(self):
         # 开始请求 下面这段全是copilot干的好事
         try:
             URL = fullURL(self.x, self.y, self.z, self.tile_name)
-            r = requests.get(URL, headers=headers)
-            if r.status_code == 200:
-                print("[+] " + URL)
+            IMG = requests.get(URL, headers=headers)
+            filename = str(self.y) + ".png"
+            with open(filename, "wb") as f:
+                f.write(IMG.content)
+            if IMG.status_code == 200:
+                print("[Thread " + str(self.threadID) + "][+] " + URL)
             else:
-                print("[-] " + URL)
+                print("[Thread " + str(self.threadID) + "][-] " + URL)
         except Exception as e:
             print(e)
+        exit(0)
+
 
 def atomicTask(x: int, y: int, z: int, tile_name: str):
     TaskURL = fullURL(x, y, z, tile_name)
@@ -116,30 +124,46 @@ def atomicTask(x: int, y: int, z: int, tile_name: str):
     filename = str(y) + ".png"
     with open(filename, "wb") as f:
         f.write(img.content)
-    print(TaskURL)
+    print("[Thread 0][*] " + TaskURL)
 
 
-def multipleTask(x_min, x_max, y_min, y_max, z, tile_name, task_name):
+def multipleTask(x_min, x_max, y_min, y_max, z, tile_name, task_name, ALLOW_MP=False):
     x_max += 1
     y_max += 1
     os.system("mkdir " + task_name)
     os.chdir(task_name)
+
+    TIME_START = time.time()
+
+    # TASKBODY
     for x in range(x_min, x_max):
         os.system("mkdir " + str(x))
         os.chdir(str(x))
-        QUEUE = []
-        for i in range(y_min, y_max):
-            QUEUE.append(i)
-        for y in range(y_min, y_max):
-            atomicTask(x, y, z, tile_name)
+        if ALLOW_MP == False:
+            for y in range(y_min, y_max):
+                atomicTask(x, y, z, tile_name)
+        else:
+            MAX_CONNECTION = 16
+            MIN_CONNECTION = 1
+            SEMAPHORE_POOL = threading.BoundedSemaphore(MAX_CONNECTION)
+            QUEUE = []
+            for i in range(y_min, y_max):
+                QUEUE.append(i)
+            for y in range(y_min, y_max):
+                tmp = singleTileTask(x, y, z, tile_name, y)
+                tmp.start()
+                tmp.join()
         os.chdir("..")
     os.chdir("..")
 
+    TIME_END = time.time()
+    print("[TIME] " + task_name + ": " + str(TIME_END - TIME_START) + "s")
 
-def taskGenerator(zoom, tile_name, task_name, Mode="Region", x_min=0, x_max=0, y_min=0, y_max=0):
-    if Mode == "Region":
+
+def taskGenerator(zoom, tile_name, task_name, x_min=0, x_max=0, y_min=0, y_max=0, MODE="Region", ALLOW_MP=False):
+    if MODE == "Region":
         if zoom == 0:
-            print("Error: zoom must be greater than 0 in Region Mode")
+            print("Error: zoom must be greater than 0 in Region MODE")
         else:
             if x_min == 0 and x_max == 0 and y_min == 0 and y_max == 0:
                 x_min = int(input("Please input x_min:"))
@@ -148,8 +172,8 @@ def taskGenerator(zoom, tile_name, task_name, Mode="Region", x_min=0, x_max=0, y
                 y_max = int(input("Please input y_max:"))
             Count = (x_max - x_min + 1) * (y_max - y_min + 1)
             print("Total tiles:", Count)
-            multipleTask(x_min, x_max, y_min, y_max, zoom, tile_name, task_name)
-    elif Mode == "Full":
+            multipleTask(x_min, x_max, y_min, y_max, zoom, tile_name, task_name, ALLOW_MP)
+    elif MODE == "Full":
         if zoom == 0:
             Count = 1
             print("Total tiles:", Count)
@@ -157,6 +181,6 @@ def taskGenerator(zoom, tile_name, task_name, Mode="Region", x_min=0, x_max=0, y
         else:
             Count = pow(2, zoom * 2)
             print("Total tiles:", Count)
-            multipleTask(0, pow(2, zoom) - 1, 0, pow(2, zoom) - 1, zoom, tile_name, task_name)
+            multipleTask(0, pow(2, zoom) - 1, 0, pow(2, zoom) - 1, zoom, tile_name, task_name, ALLOW_MP)
     else:
-        print("Error: Mode Error")
+        print("Error: MODE Error")

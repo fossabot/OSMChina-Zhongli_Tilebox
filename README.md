@@ -30,9 +30,9 @@
 ### Requester
 
 ```python
-taskGenerator(0, "OSMChina", "测试任务S", "Full")
-taskGenerator(2, "OSMChina", "测试任务R", "Region", 2, 3, 2, 3)
-taskGenerator(3, "OSMChina", "测试任务F", "Full")
+taskGenerator(0, "OSMChina", "测试任务S", MODE="Full")
+taskGenerator(2, "OSMChina", "测试任务R", 2, 3, 2, 3, MODE="Region")
+taskGenerator(3, "OSMChina", "测试任务F", MODE="Full")
 ```
 
 ## TODO
