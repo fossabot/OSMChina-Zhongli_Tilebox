@@ -33,3 +33,13 @@ taskGenerator(0, "OSMChina", "测试任务S", "Full")
 taskGenerator(2, "OSMChina", "测试任务R", "Region", 2, 3, 2, 3)
 taskGenerator(3, "OSMChina", "测试任务F", "Full")
 ```
+
+TODO
+
+1. 多线程
+2. 多样化的请求顺序（随机压测或者中心辐射，多中心同步辐射）
+2. Combiner & Viewer
+3. 允许重启后继续进度（或者可能搞成一种专有格式）
+4. 
+
+这个与[github.com/AMDmi3/tiletool](https://wiki.openstreetmap.org/wiki/Tiletool)不是一回事，但他的功能我们可以学习
