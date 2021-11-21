@@ -10,19 +10,19 @@ TILE_SERVER = {
     "OSMChina": ["{protocol}{random}tile.osmchina.org/{z}/{x}/{y}{retina}.png{apikey}",
                  ["https", "http"],  # {protocol}
                  "",  # {random}
-                 "",  # {retina}
+                 [""],  # {retina}
                  ""  # {apikey}
                  ],
     "Teacestrack": ["{protocol}{random}tile.tracestrack.org/{z}/{x}/{y}{retina}.png{apikey}",
                     ["https", "http"],  # {protocol}
-                    "a-c"  # {random}
-                    "@1.5x",  # {retina}
+                    "a-c",  # {random}
+                    ["1.0","1.5","2.0"],  # {retina}
                     "?apikey=9f8f8f8f-9f8f-9f8f-9f8f-9f8f8f8f8f8"  # {apikey}
                     ]
 }
 
 headers = {
-    "User-Agent": "OSMChina-TileRequest/0.2.0",
+    "User-Agent": "OSMChina-TileRequest/0.3.0",
     "Cookie": "",
 }
 
@@ -68,9 +68,9 @@ def fullURL(x: int, y: int, z: int, tile_name):
     URL = URL.replace("{x}", str(x))
     URL = URL.replace("{y}", str(y))
     URL = URL.replace("{z}", str(z))
-    # 组装Retina分辨率
-    if TILE_SERVER[tile_name][3] != "":
-        URL = URL.replace("{retina}", TILE_SERVER[tile_name][3])
+    # 组装Retina分辨率 优先最大分辨率
+    if TILE_SERVER[tile_name][3][0] != "":
+        URL = URL.replace("{retina}", "@"+TILE_SERVER[tile_name][3][len(TILE_SERVER[tile_name][3]) - 1]+"x")
     else:
         URL = URL.replace("{retina}", "")
     # 组装APIKEY
