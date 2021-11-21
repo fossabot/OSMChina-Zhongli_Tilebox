@@ -3,15 +3,14 @@ import random
 import requests
 
 TILE_SERVER = {
-    "OpenStreetMap Default(Carto)": ["{protocol}{random}tile.openstreetmap.org/{z}/{x}/{y}.png",
-                                     ["https", "http"],
-                                     "a-c"],
-    "OpenStreetMap HOT": ["{protocol}{random}tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
-                          ["https", "http"],
-                          "a-c"],
     "OSMChina": ["{protocol}{random}tile.osmchina.org/{z}/{x}/{y}.png",
                  ["https", "http"],
+                 "",
                  ""],
+    "Teacestrack": ["{protocol}{random}tile.tracestrack.org/{z}/{x}/{y}.png{apikey}",
+                    ["https", "http"],
+                    "a-c"
+                    "?apikey=9f8f8f8f-9f8f-9f8f-9f8f-9f8f8f8f8f8"],
 }
 
 headers = {
@@ -34,6 +33,8 @@ def fullURL(x: int, y: int, z: int, tile_name):
     PROTOCOL_PREFIX_FTP = "ftp://"
     # 开始组装准备
     URL = TILE_SERVER[tile_name][0]
+    if "osmchina.org" not in URL:
+        print("Error: Not OSMChina tile service!")
     Protocol_list = TILE_SERVER[tile_name][1]
     if TILE_SERVER[tile_name][2] != "":
         Random_list = [TILE_SERVER[tile_name][2].split("-")[0], TILE_SERVER[tile_name][2].split("-")[1]]
@@ -55,6 +56,9 @@ def fullURL(x: int, y: int, z: int, tile_name):
     URL = URL.replace("{x}", str(x))
     URL = URL.replace("{y}", str(y))
     URL = URL.replace("{z}", str(z))
+    # 组装APIKEY
+    if TILE_SERVER[tile_name][3] != "":
+        URL = URL.replace("{apikey}", TILE_SERVER[tile_name][3])
     return URL
 
 
@@ -108,5 +112,7 @@ def taskGenerator(zoom, tile_name, task_name, Mode="Region", x_min=0, x_max=0, y
 
 
 if __name__ == "__main__":
+    os.system("mkdir OSMChina_Backup")
+    os.chdir("OSMChina_Backup")
     for i in range(10):
         taskGenerator(i, "OSMChina", "OSMChina_Backup_" + str(i), "Full")
