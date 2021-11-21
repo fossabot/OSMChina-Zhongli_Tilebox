@@ -90,15 +90,17 @@ class singleTileTask(threading.Thread):
     y = -1
     z = -1
     tile_name = "OSMChina"
+    task_name = "singleTileTask"
     threadID = 0
 
     # INIT
-    def __init__(self, x: int, y: int, z: int, tile_name: str, threadID: int):
+    def __init__(self, x: int, y: int, z: int, tile_name: str, task_name: str, threadID: int):
         super().__init__()
         self.x = x
         self.y = y
         self.z = z
         self.tile_name = tile_name
+        self.task_name = task_name
         self.threadID = threadID
 
     def run(self):
@@ -107,6 +109,22 @@ class singleTileTask(threading.Thread):
             URL = fullURL(self.x, self.y, self.z, self.tile_name)
             IMG = requests.get(URL, headers=headers)
             filename = str(self.y) + ".png"
+
+            import platform
+            pwd="DEFAULT"
+            if platform.system() == "Windows":
+                pwd=os.system("echo %cd%")
+            elif platform.system() == "Linux":
+                pwd=os.system("pwd")
+            else:
+                pwd=os.system("pwd")
+
+            # 修正子进程目录
+            os.system("echo %cd%")
+            # os.chdir(self.task_name)
+            # os.chdir(str(self.x))
+            # os.system("echo %cd%")
+
             with open(filename, "wb") as f:
                 f.write(IMG.content)
             if IMG.status_code == 200:
@@ -150,9 +168,11 @@ def multipleTask(x_min, x_max, y_min, y_max, z, tile_name, task_name, ALLOW_MP=F
             for i in range(y_min, y_max):
                 QUEUE.append(i)
             for y in range(y_min, y_max):
-                tmp = singleTileTask(x, y, z, tile_name, y)
+                tmp = singleTileTask(x, y, z, tile_name, task_name, y)
                 tmp.start()
-                tmp.join()
+                delay=0.100
+                # time.sleep(delay)
+                # tmp.join()
         os.chdir("..")
     os.chdir("..")
 
