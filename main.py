@@ -79,6 +79,23 @@ def multipleTask(x_min, x_max, y_min, y_max, z, tile_name, task_name):
             atomicTask(x, y, z, tile_name)
         os.chdir("..")
 
+def taskGenerator():
+    Mode=input()
+    if Mode == "Region":
+        x_min=int(input())
+        x_max=int(input())
+        y_min=int(input())
+        y_max=int(input())
+        z=int(input())
+        tile_name=input()
+        task_name=input()
+        multipleTask(x_min, x_max, y_min, y_max, z, tile_name, task_name)
+    else Mode == "Full":
+        z=int(input())
+        tile_name=input()
+        task_name=input()
+        multipleTask(0, 2**z-1, 0, 2**z-1, z, tile_name, task_name)
 
 if __name__ == "__main__":
-    multipleTask(2, 3, 2, 3, 2, "OSMChina", "测试任务")
+    taskGenerator()
+    # multipleTask(2, 3, 2, 3, 2, "OSMChina", "测试任务")
