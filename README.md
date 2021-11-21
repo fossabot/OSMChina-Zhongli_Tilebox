@@ -1,4 +1,6 @@
 # OSMChina-Zhongli_Tilebox
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FLaoshuBaby%2FOSMChina-Zhongli_Tilebox.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FLaoshuBaby%2FOSMChina-Zhongli_Tilebox?ref=badge_shield)
+
 
 ## 介绍
 
@@ -63,3 +65,7 @@ OSMChina承诺
 不提供对其他非自有瓦片服务的爬取并屏蔽对外来源。
 
 该工具仅用于诊断和调试渲染风格使用。
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FLaoshuBaby%2FOSMChina-Zhongli_Tilebox.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FLaoshuBaby%2FOSMChina-Zhongli_Tilebox?ref=badge_large)
