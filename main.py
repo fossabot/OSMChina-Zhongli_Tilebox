@@ -16,7 +16,7 @@ TILE_SERVER = {
 
 headers = {
     # "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36",
-    "User-Agent": "OSMChina-TileRequest/Debug-0.0.0",
+    "User-Agent": "OSMChina-TileRequest/0.2.0",
     "Cookie": "",
 }
 
@@ -80,6 +80,7 @@ def multipleTask(x_min, x_max, y_min, y_max, z, tile_name, task_name):
         os.chdir("..")
     os.chdir("..")
 
+
 def taskGenerator(zoom, tile_name, task_name, Mode="Region", x_min=0, x_max=0, y_min=0, y_max=0):
     if Mode == "Region":
         if zoom == 0:
@@ -107,6 +108,5 @@ def taskGenerator(zoom, tile_name, task_name, Mode="Region", x_min=0, x_max=0, y
 
 
 if __name__ == "__main__":
-    taskGenerator(0, "OSMChina", "测试任务S", "Full")
-    taskGenerator(2, "OSMChina", "测试任务R", "Region", 2, 3, 2, 3)
-    taskGenerator(3, "OSMChina", "测试任务F", "Full")
+    for i in range(10):
+        taskGenerator(i, "OSMChina", "OSMChina_Backup_" + str(i), "Full")
