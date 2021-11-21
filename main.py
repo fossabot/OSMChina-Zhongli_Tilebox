@@ -1,3 +1,4 @@
+import os
 import random
 import requests
 
@@ -14,7 +15,8 @@ TILE_SERVER = {
 }
 
 headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36",
+    # "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36",
+    "User-Agent": "OSMChina-TileRequest/Debug-0.0.0",
     "Cookie": "",
 }
 
@@ -57,15 +59,26 @@ def fullURL(x: int, y: int, z: int, name):
 def atomicTask(x:int,y:int,z:int,name:str):
     TaskURL=fullURL(x,y,z,name)
     img=requests.get(url=TaskURL,headers=headers)
-    filename=str(z)+".png"
+    filename=str(y)+".png"
     with open(filename,"wb") as f:
         f.write(img.content)
     print(TaskURL)
 
 def multipleTask(x_min,x_max,y_min,y_max,z,name):
     for x in range(x_min,x_max):
+        os.system("mkdir "+str(x))
+    for x in range(x_min,x_max):
+        os.system("cd "+str(x))
         for y in range(y_min,y_max):
+            os.system("mkdir "+str(y))
+        for y in range(y_min,y_max):
+            os.system("cd "+str(y))
             atomicTask(x,y,z,name)
 
 if __name__ == "__main__":
-    multipleTask(0,5,0,5,7,"OSMChina")
+    os.system("mkdir 0")
+    # os.system("cd 0")
+    os.chdir("0")
+    os.system("echo %cd%")
+    # os.system("pwd")
+    #multipleTask(0,3,0,3,2,"OSMChina")
