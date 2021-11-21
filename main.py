@@ -20,21 +20,23 @@ headers = {
     "Cookie": "",
 }
 
+
 def RandomChar(begin: str, end: str):
     Range = int(ord(end) - ord(begin))
     tmp = random.randint(0, Range - 1)
     return chr(ord(begin) + tmp)
 
-def fullURL(x: int, y: int, z: int, name):
+
+def fullURL(x: int, y: int, z: int, tile_name):
     # PREFIX
     PROTOCOL_PREFIX_HTTPS = "https://"
     PROTOCOL_PREFIX_HTTP = "http://"
     PROTOCOL_PREFIX_FTP = "ftp://"
     # 开始组装准备
-    URL = TILE_SERVER[name][0]
-    Protocol_list = TILE_SERVER[name][1]
-    if TILE_SERVER[name][2] != "":
-        Random_list = [TILE_SERVER[name][2].split("-")[0], TILE_SERVER[name][2].split("-")[1]]
+    URL = TILE_SERVER[tile_name][0]
+    Protocol_list = TILE_SERVER[tile_name][1]
+    if TILE_SERVER[tile_name][2] != "":
+        Random_list = [TILE_SERVER[tile_name][2].split("-")[0], TILE_SERVER[tile_name][2].split("-")[1]]
     else:
         Random_list = ""
     # 组装协议
@@ -56,29 +58,27 @@ def fullURL(x: int, y: int, z: int, name):
     return URL
 
 
-def atomicTask(x:int,y:int,z:int,name:str):
-    TaskURL=fullURL(x,y,z,name)
-    img=requests.get(url=TaskURL,headers=headers)
-    filename=str(y)+".png"
-    with open(filename,"wb") as f:
+def atomicTask(x: int, y: int, z: int, tile_name: str):
+    TaskURL = fullURL(x, y, z, tile_name)
+    img = requests.get(url=TaskURL, headers=headers)
+    filename = str(y) + ".png"
+    with open(filename, "wb") as f:
         f.write(img.content)
     print(TaskURL)
 
-def multipleTask(x_min,x_max,y_min,y_max,z,name):
-    for x in range(x_min,x_max):
-        os.system("mkdir "+str(x))
-    for x in range(x_min,x_max):
-        os.system("cd "+str(x))
-        for y in range(y_min,y_max):
-            os.system("mkdir "+str(y))
-        for y in range(y_min,y_max):
-            os.system("cd "+str(y))
-            atomicTask(x,y,z,name)
+
+def multipleTask(x_min, x_max, y_min, y_max, z, tile_name, task_name):
+    x_max += 1
+    y_max += 1
+    os.system("mkdir " + task_name)
+    os.chdir(task_name)
+    for x in range(x_min, x_max):
+        os.system("mkdir " + str(x))
+        os.chdir(str(x))
+        for y in range(y_min, y_max):
+            atomicTask(x, y, z, tile_name)
+        os.chdir("..")
+
 
 if __name__ == "__main__":
-    os.system("mkdir 0")
-    # os.system("cd 0")
-    os.chdir("0")
-    os.system("echo %cd%")
-    # os.system("pwd")
-    #multipleTask(0,3,0,3,2,"OSMChina")
+    multipleTask(2, 3, 2, 3, 2, "OSMChina", "测试任务")
