@@ -1,17 +1,39 @@
 import wget
+import random
 
-url1 = "https://"
+TILE_SERVER={
+    "OpenStreetMap Default(Carto)":["{protocol}{random}.tile.openstreetmap.org/{z}/{x}/{y}.png",["https","http"],"a-c"],
+    "OpenStreetMap HOT":["{protocol}{random}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",["https","http"],"a-c"],
+    "OSMChina":["{protocol}{random}.tile.openstreetmap.fr/{z}/{x}/{y}.png",["https","http"],""],
+}
+
+def fullURL(x:int,y:int,z:int,name):
+    PROTOCOL_PREFIX_HTTPS = "https://"
+    PROTOCOL_PREFIX_HTTP = "http://"
+    PROTOCOL_PREFIX_FTP = "ftp://"
+    Src=TILE_SERVER[name][0]
+    Protocol_list=TILE_SERVER[name][1]
+    if Random != "":
+        Random_list=[TILE_SERVER[name][2].split("-")[0],TILE_SERVER[name][2].split("-")[1]]
+    else:
+        Random_list=""
+    if Protocol_list[0]=="https":
+        Src=Src.replace("{protocol}",PROTOCOL_PREFIX_HTTPS)
+    elif Protocol_list[0]=="ftp":
+        Src=Src.replace("{protocol}",PROTOCOL_PREFIX_FTP)
+    else:
+        Src=Src.replace("{protocol}",PROTOCOL_PREFIX_HTTP)
+    if Random_list!="":
+        Src=Src.replace("{random}",)
 
 
-def randomc():
-    import random
-    tmp = random.randint(0, 2)
-    if tmp == 0:
-        return 'a' + "."
-    elif tmp == 1:
-        return 'b' + "."
-    elif tmp == 2:
-        return 'c' + "."
+def RandomChar(begin:str,end:str):
+    Range=int(ord(end)-ord(begin))
+    tmp = random.randint(0, Range-1)
+    return chr(ord(begin)+tmp)
+
+for i in range(50):
+    print(RandomChar("a","g"))
 
 
 # url2 = "tile.openstreetmap.org/15/26679/13744.png"
