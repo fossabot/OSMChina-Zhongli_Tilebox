@@ -79,23 +79,34 @@ def multipleTask(x_min, x_max, y_min, y_max, z, tile_name, task_name):
             atomicTask(x, y, z, tile_name)
         os.chdir("..")
 
-def taskGenerator():
-    Mode=input()
+
+def taskGenerator(zoom, tile_name, task_name, Mode="Region", x_min=0, x_max=0, y_min=0, y_max=0):
     if Mode == "Region":
-        x_min=int(input())
-        x_max=int(input())
-        y_min=int(input())
-        y_max=int(input())
-        z=int(input())
-        tile_name=input()
-        task_name=input()
-        multipleTask(x_min, x_max, y_min, y_max, z, tile_name, task_name)
-    else Mode == "Full":
-        z=int(input())
-        tile_name=input()
-        task_name=input()
-        multipleTask(0, 2**z-1, 0, 2**z-1, z, tile_name, task_name)
+        if zoom ==0:
+            print("Error: zoom must be greater than 0 in Region Mode")
+        else:
+            if x_min == 0 and x_max == 0 and y_min == 0 and y_max == 0:
+                x_min = int(input("请输入x_min:"))
+                x_max = int(input("请输入x_max:"))
+                y_min = int(input("请输入y_min:"))
+                y_max = int(input("请输入y_max:"))
+            Count = (x_max - x_min + 1) * (y_max - y_min + 1)
+            print("Total tiles:", Count)
+            multipleTask(x_min, x_max, y_min, y_max, zoom, tile_name, task_name)
+    elif Mode == "Full":
+        if zoom == 0:
+            Count = 1
+            print("Total tiles:", Count)
+            multipleTask(0, 0, 0, 0, 0, tile_name, task_name)
+        else:
+            Count = pow(2, zoom*2)
+            print("Total tiles:", Count)
+            multipleTask(0, pow(2, zoom) - 1, 0, pow(2, zoom) - 1, zoom, tile_name, task_name)
+    else:
+        print("Error: Mode Error")
+
 
 if __name__ == "__main__":
-    taskGenerator()
-    # multipleTask(2, 3, 2, 3, 2, "OSMChina", "测试任务")
+    taskGenerator(0,"OSMChina","测试任务S",)
+    taskGenerator(2, "OSMChina", "测试任务R", "Region", 2, 3, 2, 3)
+    taskGenerator(3, "OSMChina", "测试任务F", "Full")
