@@ -1,6 +1,5 @@
 import random
-
-import wget
+import requests
 
 TILE_SERVER = {
     "OpenStreetMap Default(Carto)": ["{protocol}{random}tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -32,7 +31,7 @@ def fullURL(x: int, y: int, z: int, name):
     else:
         URL = URL.replace("{protocol}", PROTOCOL_PREFIX_HTTP)
     if Random_list != "":
-        URL = URL.replace("{random}", RandomChar(Random_list[0], Random_list[1])+".")
+        URL = URL.replace("{random}", RandomChar(Random_list[0], Random_list[1]) + ".")
     else:
         URL = URL.replace("{random}", "")
     URL = URL.replace("{x}", str(x))
@@ -47,19 +46,16 @@ def RandomChar(begin: str, end: str):
     tmp = random.randint(0, Range - 1)
     return chr(ord(begin) + tmp)
 
-# url2 = "tile.openstreetmap.org/15/26679/13744.png"
-# url2 = "tile.osmchina.org/15/26679/13744.png"
 
-urltest=fullURL(107, 50, 7, "OSMChina")
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36",
+    "Cookie": "",
+}
 
-# file = wget.download(url,"user-agent"=Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36")
-file = wget.download(url)
-print(file)
+def task(x,y,z,name):
+    img=requests.get(url=fullURL(x,y,z,name),headers=headers)
+    filename=str(z)+".png"
+    with open(filename,"wb") as f:
+        f.write(img.content)
 
-# useragent="Mozilla/5.0"
-# # useragent="Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36"
-#
-# import os
-# cmd="wget "+url+" --user-agent "+useragent
-# print(cmd)
-# os.system(cmd)
+task(107, 50, 7, "OSMChina")
