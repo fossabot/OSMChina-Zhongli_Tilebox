@@ -110,20 +110,25 @@ class singleTileTask(threading.Thread):
             IMG = requests.get(URL, headers=headers)
             filename = str(self.y) + ".png"
 
-            import platform
-            pwd="DEFAULT"
-            if platform.system() == "Windows":
-                pwd=os.system("echo %cd%")
-            elif platform.system() == "Linux":
-                pwd=os.system("pwd")
-            else:
-                pwd=os.system("pwd")
-
             # 修正子进程目录
-            os.system("echo %cd%")
-            # os.chdir(self.task_name)
-            # os.chdir(str(self.x))
-            # os.system("echo %cd%")
+            PWD=os.getcwd()
+            # print("PWD:", PWD)
+            import platform
+            if platform.system() == "Windows":
+                PWD_LIST=PWD.split("\\")
+            elif platform.system() == "Linux":
+                PWD_LIST=PWD.split("/")
+            elif platform.system() == "Darwin":
+                PWD_LIST=PWD.split("/")
+            else:
+                PWD_LIST=PWD.split("/")
+            print(PWD_LIST[len(PWD_LIST) - 1], PWD_LIST[len(PWD_LIST) - 2])
+            if PWD_LIST[len(PWD_LIST)-1]!=str(self.x):
+                if PWD_LIST[len(PWD_LIST)-1]!=self.task_name:
+                    os.chdir(self.task_name)
+                    os.chdir(str(self.x))
+                else:
+                    os.chdir(str(self.x))
 
             with open(filename, "wb") as f:
                 f.write(IMG.content)
@@ -170,9 +175,9 @@ def multipleTask(x_min, x_max, y_min, y_max, z, tile_name, task_name, ALLOW_MP=F
             for y in range(y_min, y_max):
                 tmp = singleTileTask(x, y, z, tile_name, task_name, y)
                 tmp.start()
-                delay=0.100
+                delay=0.1
                 # time.sleep(delay)
-                # tmp.join()
+                tmp.join()
         os.chdir("..")
     os.chdir("..")
 
