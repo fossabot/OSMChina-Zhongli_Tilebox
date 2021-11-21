@@ -2,6 +2,9 @@ import os
 import random
 import requests
 
+import threading
+import time
+
 WHITE_LIST = [
     "osmchina.org"
 ]
@@ -80,6 +83,32 @@ def fullURL(x: int, y: int, z: int, tile_name):
         URL = URL.replace("{apikey}", "")
     return URL
 
+class singleTileTask(threading.Thread):
+    # DEFAULT
+    x=-1
+    y=-1
+    z=-1
+    tile_name="OSMChina"
+
+    # INIT
+    def __init__(self, x: int, y: int, z: int, tile_name: str):
+        super().__init__()
+        self.x = x
+        self.y = y
+        self.z = z
+        self.tile_name = tile_name
+
+    def run(self):
+        # 开始请求 下面这段全是copilot干的好事
+        try:
+            URL = fullURL(self.x, self.y, self.z, self.tile_name)
+            r = requests.get(URL, headers=headers)
+            if r.status_code == 200:
+                print("[+] " + URL)
+            else:
+                print("[-] " + URL)
+        except Exception as e:
+            print(e)
 
 def atomicTask(x: int, y: int, z: int, tile_name: str):
     TaskURL = fullURL(x, y, z, tile_name)
@@ -98,6 +127,9 @@ def multipleTask(x_min, x_max, y_min, y_max, z, tile_name, task_name):
     for x in range(x_min, x_max):
         os.system("mkdir " + str(x))
         os.chdir(str(x))
+        QUEUE = []
+        for i in range(y_min, y_max):
+            QUEUE.append(i)
         for y in range(y_min, y_max):
             atomicTask(x, y, z, tile_name)
         os.chdir("..")
