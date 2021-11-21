@@ -16,7 +16,7 @@ TILE_SERVER = {
     "Teacestrack": ["{protocol}{random}tile.tracestrack.org/{z}/{x}/{y}{retina}.png{apikey}",
                     ["https", "http"],  # {protocol}
                     "a-c",  # {random}
-                    ["1.0","1.5","2.0"],  # {retina}
+                    ["1.0", "1.5", "2.0"],  # {retina}
                     "?apikey=9f8f8f8f-9f8f-9f8f-9f8f-9f8f8f8f8f8"  # {apikey}
                     ]
 }
@@ -70,7 +70,7 @@ def fullURL(x: int, y: int, z: int, tile_name):
     URL = URL.replace("{z}", str(z))
     # 组装Retina分辨率 优先最大分辨率
     if TILE_SERVER[tile_name][3][0] != "":
-        URL = URL.replace("{retina}", "@"+TILE_SERVER[tile_name][3][len(TILE_SERVER[tile_name][3]) - 1]+"x")
+        URL = URL.replace("{retina}", "@" + TILE_SERVER[tile_name][3][len(TILE_SERVER[tile_name][3]) - 1] + "x")
     else:
         URL = URL.replace("{retina}", "")
     # 组装APIKEY
@@ -110,10 +110,10 @@ def taskGenerator(zoom, tile_name, task_name, Mode="Region", x_min=0, x_max=0, y
             print("Error: zoom must be greater than 0 in Region Mode")
         else:
             if x_min == 0 and x_max == 0 and y_min == 0 and y_max == 0:
-                x_min = int(input("请输入x_min:"))
-                x_max = int(input("请输入x_max:"))
-                y_min = int(input("请输入y_min:"))
-                y_max = int(input("请输入y_max:"))
+                x_min = int(input("Please input x_min:"))
+                x_max = int(input("Please input x_max:"))
+                y_min = int(input("Please input y_min:"))
+                y_max = int(input("Please input y_max:"))
             Count = (x_max - x_min + 1) * (y_max - y_min + 1)
             print("Total tiles:", Count)
             multipleTask(x_min, x_max, y_min, y_max, zoom, tile_name, task_name)
